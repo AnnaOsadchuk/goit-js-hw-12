@@ -11,6 +11,7 @@ const gallery = document.querySelector('.gallery');
 const input = document.querySelector('.input-search');
 const formEl = document.querySelector('.js-form');
 const loader = document.querySelector('.loader');
+
 /* const messageLoad =
    'We are sorry, but you have reached the end of search results'; */
 
@@ -23,35 +24,53 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
 });
 
-let currentPage = 40;
+let currentPage = 1;
 
 loadMore.addEventListener('click', onLoad);
 
-function onLoad(page = 1) {
+function onLoad(event) {
+  event.preventDefault();
+  const searchQuery = input.value;
+  showLoader();
   currentPage += 1;
-  searchPixa(currentPage)
-    .then(images => {
+  searchPixa(searchQuery, currentPage)
+    .then(([images, isNextPage]) => {
       const markup = createMarkup(images);
       gallery.insertAdjacentHTML('beforeend', markup);
       lightbox.refresh();
+      scroll();
       hideLoader();
-      if (data.hits === data.totalHits) {
+      if (!isNextPage) {
         loadMore.hidden = true;
+        const messageLoad =
+          'We are sorry, but you have reached the end of search results';
+        iziToast.show({
+          titleColor: '#FFFFFF',
+          titleSize: '16px',
+          messageSize: '16px',
+          messageColor: '#FFFFFF',
+          backgroundColor: '#2E2F42',
+          message: `${messageLoad}`,
+          position: 'bottomLeft',
+          timeout: 3000,
+          /*  iconUrl: Error_png, */
+        });
       }
     })
-    .catch(messageLoad => {
+    .catch(message => {
       iziToast.show({
         titleColor: '#FFFFFF',
         titleSize: '16px',
         messageSize: '16px',
         messageColor: '#FFFFFF',
         backgroundColor: '#2E2F42',
-        message: `${messageLoad}`,
+        message: `${message}`,
         position: 'bottomLeft',
         timeout: 3000,
         /*  iconUrl: Error_png, */
       });
       hideLoader();
+      loadMore.hidden = true;
     });
 }
 
@@ -60,15 +79,17 @@ function onSubmit(event) {
   const searchQuery = input.value;
   showLoader();
   searchPixa(searchQuery)
-    .then(images => {
+    .then(([images, isNextPage]) => {
       const markup = createMarkup(images);
       gallery.innerHTML = '';
       gallery.insertAdjacentHTML('beforeend', markup);
       lightbox.refresh();
-      hideLoader();
       loadMore.hidden = false;
+      scroll();
+      hideLoader();
     })
     .catch(message => {
+      gallery.innerHTML = '';
       iziToast.error({
         titleColor: '#FFFFFF',
         titleSize: '16px',
@@ -81,8 +102,14 @@ function onSubmit(event) {
         iconUrl: Error_png,
       });
       hideLoader();
-      loadMore.hidden = false;
+      loadMore.hidden = true;
     });
+}
+
+function scroll() {
+  const galleryItems = document.querySelectorAll('.js-item');
+  const rect = galleryItems.item(0).getBoundingClientRect();
+  window.scrollBy({ top: rect.height * 2, behavior: 'smooth' });
 }
 
 function showLoader() {

@@ -10,7 +10,7 @@ export default function createMarkup(images) {
         comments,
         downloads,
       }) =>
-        `<li class="gallery-item">
+        `<li class="gallery-item js-item">
         
         <a class="gallery-link" href="${largeImageURL}" >
           <img class="gallery-image" 
