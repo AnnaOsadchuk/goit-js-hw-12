@@ -11,13 +11,13 @@ const gallery = document.querySelector('.gallery');
 const input = document.querySelector('.input-search');
 const formEl = document.querySelector('.js-form');
 const loader = document.querySelector('.loader');
-
-/* const messageLoad =
-   'We are sorry, but you have reached the end of search results'; */
+const loadMoreBnt = document.querySelector('.js-load-button');
 
 formEl.addEventListener('submit', onSubmit);
-const loadMore = document.querySelector('.js-load');
-hideLoader();
+loadMoreBnt.addEventListener('click', onLoad);
+
+hideLoader(loader);
+hideLoader(loadMoreBnt);
 
 const lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
@@ -26,12 +26,10 @@ const lightbox = new SimpleLightbox('.gallery a', {
 
 let currentPage = 1;
 
-loadMore.addEventListener('click', onLoad);
-
 function onLoad(event) {
   event.preventDefault();
   const searchQuery = input.value;
-  showLoader();
+  showLoader(loader);
   currentPage += 1;
   searchPixa(searchQuery, currentPage)
     .then(([images, isNextPage]) => {
@@ -39,9 +37,9 @@ function onLoad(event) {
       gallery.insertAdjacentHTML('beforeend', markup);
       lightbox.refresh();
       scroll();
-      hideLoader();
+      hideLoader(loader);
       if (!isNextPage) {
-        loadMore.hidden = true;
+        hideLoader(loadMoreBnt);
         const messageLoad =
           'We are sorry, but you have reached the end of search results';
         iziToast.show({
@@ -49,11 +47,10 @@ function onLoad(event) {
           titleSize: '16px',
           messageSize: '16px',
           messageColor: '#FFFFFF',
-          backgroundColor: '#2E2F42',
+          backgroundColor: '#799CD2',
           message: `${messageLoad}`,
           position: 'bottomLeft',
           timeout: 3000,
-          /*  iconUrl: Error_png, */
         });
       }
     })
@@ -63,30 +60,30 @@ function onLoad(event) {
         titleSize: '16px',
         messageSize: '16px',
         messageColor: '#FFFFFF',
-        backgroundColor: '#2E2F42',
+        backgroundColor: '#799CD2',
         message: `${message}`,
         position: 'bottomLeft',
         timeout: 3000,
-        /*  iconUrl: Error_png, */
       });
-      hideLoader();
-      loadMore.hidden = true;
+      hideLoader(loader);
+      hideLoader(loadMoreBnt);
     });
 }
 
 function onSubmit(event) {
   event.preventDefault();
   const searchQuery = input.value;
-  showLoader();
+  showLoader(loader);
   searchPixa(searchQuery)
     .then(([images, isNextPage]) => {
       const markup = createMarkup(images);
       gallery.innerHTML = '';
       gallery.insertAdjacentHTML('beforeend', markup);
       lightbox.refresh();
-      loadMore.hidden = false;
+      showLoader(loadMoreBnt);
+
       scroll();
-      hideLoader();
+      hideLoader(loader);
     })
     .catch(message => {
       gallery.innerHTML = '';
@@ -101,8 +98,8 @@ function onSubmit(event) {
         timeout: 3000,
         iconUrl: Error_png,
       });
-      hideLoader();
-      loadMore.hidden = true;
+      hideLoader(loader);
+      hideLoader(loadMoreBnt);
     });
 }
 
@@ -112,10 +109,10 @@ function scroll() {
   window.scrollBy({ top: rect.height * 2, behavior: 'smooth' });
 }
 
-function showLoader() {
-  loader.classList.remove('hidden');
+function showLoader(element) {
+  element.classList.remove('hidden');
 }
 
-function hideLoader() {
-  loader.classList.add('hidden');
+function hideLoader(element) {
+  element.classList.add('hidden');
 }

@@ -23,6 +23,8 @@
 }
 .container {
   margin: 0px 156px;
+  position: relative;
+  text-align: center;
 }
 .form {
   display: flex;
@@ -31,11 +33,10 @@
   font-size: 16px;
   line-height: 150%;
   color: #2e2f42;
-  display: flex;
   flex-direction: row;
   max-width: 360px;
   margin-top: 36px;
-  margin-left: 534px;
+  margin-left: 684px;
 }
 
 .input-search {
@@ -43,7 +44,7 @@
   font-size: 16px;
   border: 1px solid #808080;
   border-radius: 4px;
-  /* display: block; */
+  display: block;
   width: 272px;
   height: 40px;
   padding: 0px 10px;
@@ -75,11 +76,7 @@ button:hover,
 button:focus {
   background-color: #6c8cff;
 }
-.js-load {
-  margin-top: 32px;
-  margin-left: 735px;
-  margin-bottom: 44px;
-}
+
 .gallery {
   display: grid;
   max-width: 1128px;
@@ -136,9 +133,22 @@ button:focus {
   letter-spacing: 0.04em;
   color: #2e2f42;
 }
-.loader {
-  font-size: 12px;
+.js-load-button {
+  margin-top: 32px;
+  margin-bottom: 44px;
 }
-.loader.hidden {
+.loader {
+  font-family: 'Montserrat', Medium;
+  font-size: 18px;
+  margin-top: 22px;
+  margin-bottom: 10px;
+}
+.loader.hidden,
+.js-load-button.hidden {
   display: none;
+}
+.end-point {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
