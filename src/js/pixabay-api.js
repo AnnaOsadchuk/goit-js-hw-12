@@ -13,7 +13,7 @@ export default async function searchPixa(searchQuery, page = 1) {
 
   try {
     const { data } = await axios.get(link);
-    const isNextPage = PAGE * PER_PAGE <= data.totalHits ? true : false;
+    const isNextPage = PAGE * PER_PAGE < data.totalHits ? true : false;
 
     if (data.hits.length === 0) {
       throw 'Sorry, there are no images matching your search query. Please try again!';

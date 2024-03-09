@@ -140,7 +140,7 @@ button:focus {
 .loader {
   font-family: 'Montserrat', Medium;
   font-size: 18px;
-  margin-top: 22px;
+  margin-top: 15px;
   margin-bottom: 10px;
 }
 .loader.hidden,

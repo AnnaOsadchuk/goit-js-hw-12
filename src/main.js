@@ -16,8 +16,8 @@ const loadMoreBnt = document.querySelector('.js-load-button');
 formEl.addEventListener('submit', onSubmit);
 loadMoreBnt.addEventListener('click', onLoad);
 
-hideLoader(loader);
-hideLoader(loadMoreBnt);
+hideElement(loader);
+hideElement(loadMoreBnt);
 
 const lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
@@ -25,11 +25,11 @@ const lightbox = new SimpleLightbox('.gallery a', {
 });
 
 let currentPage = 1;
+let searchQuery;
 
 function onLoad(event) {
   event.preventDefault();
-  const searchQuery = input.value;
-  showLoader(loader);
+  showElement(loader);
   currentPage += 1;
   searchPixa(searchQuery, currentPage)
     .then(([images, isNextPage]) => {
@@ -37,9 +37,9 @@ function onLoad(event) {
       gallery.insertAdjacentHTML('beforeend', markup);
       lightbox.refresh();
       scroll();
-      hideLoader(loader);
+      hideElement(loader);
       if (!isNextPage) {
-        hideLoader(loadMoreBnt);
+        hideElement(loadMoreBnt);
         const messageLoad =
           'We are sorry, but you have reached the end of search results';
         iziToast.show({
@@ -65,25 +65,28 @@ function onLoad(event) {
         position: 'bottomLeft',
         timeout: 3000,
       });
-      hideLoader(loader);
-      hideLoader(loadMoreBnt);
+      hideElement(loader);
+      hideElement(loadMoreBnt);
     });
 }
 
 function onSubmit(event) {
+  resetCurrent();
   event.preventDefault();
-  const searchQuery = input.value;
-  showLoader(loader);
+  searchQuery = input.value;
+  showElement(loader);
+  hideElement(loadMoreBnt);
   searchPixa(searchQuery)
     .then(([images, isNextPage]) => {
       const markup = createMarkup(images);
       gallery.innerHTML = '';
       gallery.insertAdjacentHTML('beforeend', markup);
       lightbox.refresh();
-      showLoader(loadMoreBnt);
-
+      if (isNextPage) {
+        showElement(loadMoreBnt);
+      }
       scroll();
-      hideLoader(loader);
+      hideElement(loader);
     })
     .catch(message => {
       gallery.innerHTML = '';
@@ -98,8 +101,8 @@ function onSubmit(event) {
         timeout: 3000,
         iconUrl: Error_png,
       });
-      hideLoader(loader);
-      hideLoader(loadMoreBnt);
+      hideElement(loader);
+      hideElement(loadMoreBnt);
     });
 }
 
@@ -109,10 +112,14 @@ function scroll() {
   window.scrollBy({ top: rect.height * 2, behavior: 'smooth' });
 }
 
-function showLoader(element) {
+function showElement(element) {
   element.classList.remove('hidden');
 }
 
-function hideLoader(element) {
+function hideElement(element) {
   element.classList.add('hidden');
+}
+
+function resetCurrent() {
+  currentPage = 1;
 }
